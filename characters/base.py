@@ -4,6 +4,8 @@ class Character:
         self.health = health
         self.attack_power = attack_power
         self.max_health = health
+        self.burn_status = 0
+        self.abilities = []
 
     def attack(self, opponent):
         opponent.health -= self.attack_power

@@ -3,6 +3,8 @@ from characters.base import Character
 class Mage(Character):
     def __init__(self, name):
         super().__init__(name, health=100, attack_power=30)
+        self.abilities = ['magic_bullet', 'fireball', 'recovery', 'arcane_fortify']
+        self.buffed = False
 
     def magic_bullet(self, opponent):
         damage = self.attack_power
@@ -22,24 +24,18 @@ class Mage(Character):
         old_health = self.health
         self.health = min(self.health + 15, self.max_health)
         recovered = self.health - old_health
-        print(f'{self.name} uses recovery and restores {recovered} health! Now at {self.health}/100 HP.')
-        if self.health <= 0:
-            print(f'{self.name} has been defeated!')
-        if self.health > 100:
-            self.health = 100
-        else:
-            print(f'{self.name} is now at {self.health}/100 HP!')
+        print(f'{self.name} uses recovery and restores {recovered} health! Now at {self.health}/{self.max_health} HP.')
 
     def arcane_fortify(self):
-        if self.has_buffed:
+        if self.buffed:
             print(f'{self.name} is already buffed!')
             return
         
         self.max_health += 40
         self.attack_power = max(1, self.attack_power // 2)
-        self.health += 20
+        self.health = min(self.health + 20, self.max_health)
         
-        self.has_buffed = True
+        self.buffed = True
         print(f'{self.name} uses Arcane Fortify!')
         print(f'Health increased by 20, max health increased by 40, attack power halved!')
         print(f'{self.name} is now at {self.health}/{self.max_health} HP!')
