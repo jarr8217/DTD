@@ -68,6 +68,8 @@ Dragun, the Dragon King uses Fire Breath! Arcanist takes 20 damage and is burned
    ```bash
    python main.py
    ```
+6. Alternatively, open the project folder in your IDE (like VS Code or PyCharm),
+open the terminal inside the IDE, and run
 
 
 ---
