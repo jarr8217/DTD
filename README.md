@@ -52,7 +52,7 @@ Arcanist uses Fireball! The dragon takes 15 damage and is burned for 3 turns.
 Dragun, the Dragon King uses Fire Breath! Arcanist takes 20 damage and is burned for 3 turns.
 ```
 
-## How to Run
+
 ## How to Run
 1. Ensure Python 3 is installed on your system.
 2. Open a terminal or command prompt.
