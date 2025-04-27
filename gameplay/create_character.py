@@ -5,6 +5,15 @@ from characters.druid import Druid
 
 
 def create_character():
+    '''
+    Creates a character based on user input.
+
+    Args:
+        None
+
+    Returns:
+        Character: An instance of the chosen character class.
+    '''
     print("Choose your character:")
     print("1. Warrior")
     print("2. Mage")

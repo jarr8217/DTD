@@ -1,111 +1,78 @@
 import random
-
-def use_ability(player, ability, target):
-    '''Calls the appropriate ability on the player or dragon'''
-    if ability in
+from gameplay.items import use_item 
+from gameplay.use_abilities import use_ability
 
 def battle(player, dragon):
+    '''
+    Executes the turn-based battle between the player and the dragon.
+    
+    this function manages the flow of the battle, alternating turns between the player and the dragon.
+    The player can choose actions such as attacking, using abilities, using items, or viewing stats.
+    The dragon regenrates health and uses its abilities to attaxk the player. The battle ends when 
+    either the player or the dragon's health reaches zero.
+
+    Args:
+        player (Character): The player character, an instance of the Character class.
+        dragon (Dragon): The dragon character, an instance of the Dragon class.    
+    '''
     if not hasattr(player, 'burn_status'):
         player.burn_status = 0
-    if not hasattr(dragon, 'burn_status'):
-        dragon.burn_status = 0
+    if not hasattr(player, 'burn_damage'):
+        player.burn_damage = 0
 
-    while dragon.health > 0 and player.health > 0:
-        print('\n--- Your Turn ---')
+    while player.health > 0 and dragon.health > 0:
+        print(f'\n--- Your Turn ---')
         print('1. Attack')
-        print('2. Use special ability')
-        print('3. Heal')
-        print('4. View stats')
+        print('2. Use Ability')
+        print('3. Use Item')
+        print('4. View Stats')
 
         choice = input('Choose an action: ')
 
-        if choice == '2':
-            abilities = []
-
-            if hasattr(player, 'magic_bullet'):
-                abilities.append('magic_bullet')
-            if hasattr(player, 'fireball'):
-                abilities.append('fireball')
-            if hasattr(player, 'recovery'):
-                abilities.append('recovery')
-            if hasattr(player, 'arcane_fortify'):
-                abilities.append('arcane_fortify')
-
-            if not abilities:
-                print("No special abilities available.")
-            elif len(abilities) == 1:
-                ability = abilities[0]
-                if ability in ['recovery', 'arcane_fortify']:
-                    getattr(player, ability)()
-                else:
-                    getattr(player, ability)(dragon)
-            else:
-                print('Choose a special ability:')
-                for i, ability in enumerate(abilities, start=1):
-                    print(f"{i}. {ability.replace('_', ' ').title()}")
-                try:
-                    selection = int(input('Enter the number of your choice: '))
-                    if 1 <= selection <= len(abilities):
-                        ability = abilities[selection - 1]
-                        if ability in ['recovery', 'arcane_fortify']:
-                            getattr(player, ability)()
-                        else:
-                            getattr(player, ability)(dragon)
-                    else:
-                        print("Invalid choice. Try again.")
-                except ValueError:
-                    print("Invalid input. Please enter a number.")
-
+        if choice == '1':
+            player.attack(dragon)
         elif choice == '2':
+            use_ability(player, dragon)
+        elif choice == '3':
+            use_item(player)
+        elif choice == '4':
             player.display_stats()
             dragon.display_stats()
             continue
-
         else:
-            print("Invalid choice. Try again.")
+            print('Invalid choice. Try again.')
             continue
 
-        # Burn effect on player if applied
-        if hasattr(player, 'burn_status') and player.burn_status > 0:
-            player.health = max(0, player.health - 5)
-            print(f'{player.name} is burned and takes 5 damage!')
-            player.burn_status -= 1
-            if player.burn_status == 0:
-                print(f'{player.name} is no longer burned!')
-        if player.health <= 0:
-            print(f'{player.name} has been defeated!')
-            break
-
-        # Dragon's turn
-        if dragon.health > 0:
-            dragon.regenerate()
-            print("\n--- Dragon's Turn ---")
-
-            actions = ['Fire Breath', 'Tail Whip', 'Dragon Scream']
-            if dragon.fury_cooldown == 0:
-                actions.append('Dragon Fury')
-
-            dragon_action = random.choice(actions)
-
-            # Execute selected action
-            if dragon_action == 'Fire Breath':
-                dragon.fire_breath(player)
-            elif dragon_action == 'Tail Whip':
-                dragon.tail_whip(player)
-            elif dragon_action == 'Dragon Scream':
-                dragon.dragon_scream(player)
-            elif dragon_action == 'Dragon Fury':
-                dragon.dragon_fury(player)
-
-            dragon.reduce_cooldown()
-
-            if dragon.burn_status > 0:
-                dragon.health = max(0, dragon.health - 5)
-                print(f'{dragon.name} is burned and takes 5 damage! Current health: {dragon.health}/{dragon.max_health}')
-                dragon.burn_status -= 1
-                if dragon.burn_status == 0:
-                    print(f'{dragon.name} is no longer burned!')
-
+        # Handle burn damage after player's turn
+        player.burn_damage_effect()
+        dragon.burn_damage_effect()
 
         if dragon.health <= 0:
             print(f'{dragon.name} has been defeated!')
+            break
+        if player.health <= 0:
+            print(f'{player.name} has been defeated!')
+            break
+        if hasattr(player, 'end_turn'):
+            player.end_turn()
+
+        # Check if the dragon 
+        if dragon.health <= 0:
+            print(f'Congratulations! You defeated {dragon.name}!')
+            break
+        # Dragon's Turn
+        print(f'\n--- {dragon.name}\'s Turn ---')
+        dragon.regenerate()
+
+        dragon_actions = ['fire_breath', 'tail_whip', 'dragon_scream']
+        if dragon.fury_cooldown == 0:
+            dragon_actions.append('dragon_fury')
+
+        dragon_move = random.choice(dragon_actions)
+        getattr(dragon, dragon_move)(player)
+        dragon.reduce_cooldown()
+
+        # Handle burn damage again after dragon's turn
+        player.burn_damage_effect()
+        dragon.burn_damage_effect()
+
