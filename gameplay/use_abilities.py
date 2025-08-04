@@ -1,7 +1,7 @@
 def use_ability(player, opponent=None):
     '''
     Allows the player to choose a special ability to use against the opponent.
-    
+
     Args:
         player (Character): The player character, an instance of the Character class.
         opponent (Character): The opponent character, an instance of the Character class.
@@ -20,7 +20,7 @@ def use_ability(player, opponent=None):
             ability_name = player.abilities[selection - 1]
             ability_method = getattr(player, ability_name)
             # Determine if the ability needs a target (heal abilities usually don't)
-            if "heal" in ability_name or "shield" in ability_name or "barkskin" in ability_name:
+            if any(keyword in ability_name for keyword in ["heal", "shield", "bark", "recovery", "holy_light", "calm_mind", "healing_touch", "arcane_fortify"]):
                 ability_method()
             else:
                 ability_method(opponent)

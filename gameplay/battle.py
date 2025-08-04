@@ -1,14 +1,15 @@
 import random
-from gameplay.items import use_item 
+from gameplay.items import use_item
 from gameplay.use_abilities import use_ability
+
 
 def battle(player, dragon):
     '''
     Executes the turn-based battle between the player and the dragon.
-    
+
     this function manages the flow of the battle, alternating turns between the player and the dragon.
     The player can choose actions such as attacking, using abilities, using items, or viewing stats.
-    The dragon regenrates health and uses its abilities to attaxk the player. The battle ends when 
+    The dragon regenerates health and uses its abilities to attack the player. The battle ends when 
     either the player or the dragon's health reaches zero.
 
     Args:
@@ -48,7 +49,7 @@ def battle(player, dragon):
         dragon.burn_damage_effect()
 
         if dragon.health <= 0:
-            print(f'{dragon.name} has been defeated!')
+            print(f'Congratulations! You defeated {dragon.name}!')
             break
         if player.health <= 0:
             print(f'{player.name} has been defeated!')
@@ -56,10 +57,6 @@ def battle(player, dragon):
         if hasattr(player, 'end_turn'):
             player.end_turn()
 
-        # Check if the dragon 
-        if dragon.health <= 0:
-            print(f'Congratulations! You defeated {dragon.name}!')
-            break
         # Dragon's Turn
         print(f'\n--- {dragon.name}\'s Turn ---')
         dragon.regenerate()
@@ -75,4 +72,3 @@ def battle(player, dragon):
         # Handle burn damage again after dragon's turn
         player.burn_damage_effect()
         dragon.burn_damage_effect()
-

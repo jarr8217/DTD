@@ -2,9 +2,10 @@ from characters.base import Character
 from config import DRUID_CONFIG
 import random
 
+
 class Druid(Character):
     '''Druid class representing a powerful druid character.
-    
+
     Inherits from the Character class and implements specific abilities and behaviors.
 
     Attributes:
@@ -17,8 +18,10 @@ class Druid(Character):
         bark_skin_buff_active (bool): Flag to check if Bark Skin is active.
         bark_skin_buff_duration (int): Duration of the Bark Skin buff.
     '''
+
     def __init__(self, name):
-        super().__init__(name, health=DRUID_CONFIG['max_health'], attack_power=DRUID_CONFIG['attack_power'])
+        super().__init__(name,
+                         health=DRUID_CONFIG['max_health'], attack_power=DRUID_CONFIG['attack_power'])
         self.abilities = DRUID_CONFIG['abilities']
         self.bark_skin_cooldown = 0
         self.bark_skin_buff_active = False
@@ -27,15 +30,16 @@ class Druid(Character):
         self.original_attack_power = self.attack_power
 
     def nature_strike(self, opponent):
-        damage= self.attack_power
+        damage = self.attack_power
         opponent.take_damage(damage, self.name, 'Nature Strike')
-        
+
     def moonfire(self, opponent):
         '''Moonfire: Deals damage and applies burn status.'''
         if self.moonfire_cooldown > 0:
-            print(f'{self.name}\'s Moonfire is on cooldown for {self.moonfire_cooldown} more turns!')
+            print(
+                f'{self.name}\'s Moonfire is on cooldown for {self.moonfire_cooldown} more turns!')
             return
-        
+
         damage = self.attack_power + 10
         opponent.take_damage(damage, self.name, 'Moonfire')
 
@@ -44,20 +48,22 @@ class Druid(Character):
             if random.random() < 0.5:
                 opponent.burn_status = 3
                 opponent.burn_damage = 5
-                print(f'{opponent.name} is burned by Moonfire! (3 turns, 5 damage per turn)')
+                print(
+                    f'{opponent.name} is burned by Moonfire! (3 turns, 5 damage per turn)')
             else:
                 print(f'{opponent.name} resists the burn effect!')
 
         self.moonfire_cooldown = 4
 
     def healing_touch(self):
-        heal_amount = 20 
+        heal_amount = 20
         self.health = min(self.max_health, self.health + heal_amount)
         print(f'{self.name} uses Healing Touch and restores {heal_amount} health! Now at {self.health}/{self.max_health}.')
 
     def bark_skin(self):
         if self.bark_skin_cooldown > 0:
-            print(f'{self.name}\'s Bark Skin is on cooldown for {self.bark_skin_cooldown} more turns!')
+            print(
+                f'{self.name}\'s Bark Skin is on cooldown for {self.bark_skin_cooldown} more turns!')
             return
 
         if not self.bark_skin_buff_active:
@@ -66,7 +72,8 @@ class Druid(Character):
             self.health = min(self.max_health, self.health + 10)
             self.bark_skin_buff_active = True
             self.bark_skin_buff_duration = 2
-            print(f'{self.name} uses Bark Skin! Health increased by 10 and attack power halved for 2 turns!')
+            print(
+                f'{self.name} uses Bark Skin! Health increased by 10 and attack power halved for 2 turns!')
 
         self.bark_skin_cooldown = 4
 
@@ -82,12 +89,16 @@ class Druid(Character):
                 # Make sure health does not exceed max_health
                 if self.health > self.max_health:
                     self.health = self.max_health
-                print(f'{self.name}\'s Bark Skin buff has worn off! Health and attack power restored to normal.')
+                print(
+                    f'{self.name}\'s Bark Skin buff has worn off! Health and attack power restored to normal.')
 
         # Handle cooldowns
         if self.bark_skin_cooldown > 0:
             self.bark_skin_cooldown -= 1
+            if self.bark_skin_cooldown == 0:
+                print(f'{self.name}\'s Bark Skin is ready to use again!')
 
         if self.moonfire_cooldown > 0:
             self.moonfire_cooldown -= 1
-    
+            if self.moonfire_cooldown == 0:
+                print(f'{self.name}\'s Moonfire is ready to use again!')
